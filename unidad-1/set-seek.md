@@ -14,4 +14,3 @@
 - No se si este equivocado pero no sabria bien como verme en este escenario ya que en los ejemplos antes vistos me abrieron los ojos a un mundo de infinitas posibilidades asi que siento que todavia es un poco temprano como para visualizarme todavia en un sector especifico de experiencias interactivas pero creo que podria ser algo mas enfocado no tanto en la experiencia si no en el arte mezclando lo digital con lo fisico
   
 ### Actividad 03 
-- el programa funciona de tal forma que cada vez que yo arrastro el mouse en el canva dependiendo de la distancia que el mouse este del canva hace formas geometricas diferentes, de igual forma tambien dependiendo del tiempo que este el mouse sobre el canva esta se va dibujando una encima de otra haciendo que unas lineas se vean mas oscuras que otras.
