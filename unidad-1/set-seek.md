@@ -14,3 +14,7 @@
 - No se si este equivocado pero no sabria bien como verme en este escenario ya que en los ejemplos antes vistos me abrieron los ojos a un mundo de infinitas posibilidades asi que siento que todavia es un poco temprano como para visualizarme todavia en un sector especifico de experiencias interactivas pero creo que podria ser algo mas enfocado no tanto en la experiencia si no en el arte mezclando lo digital con lo fisico
   
 ### Actividad 03 
+- original link: http://www.generative-gestaltung.de/2/sketches/?01_P/P_2_0_01
+- version modificada: https://editor.p5js.org/LuisFernandoParra/sketches/cXpH6gr72
+
+  Los cambios que hice fue invertir el parametro del mouse por ejemplo antes si uno subia o bajaba el mouse aumentaba la cantidad de lineas que tenia el circulo mientras que ahora es si lo haces de izquierda a derecha, ahora si lo movias de izquierda a derecha antes aumentaba el radio del circulo mientras que ahora si lo mueves de arriba a abajo aumenta el radio del circulo
