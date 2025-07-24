@@ -60,6 +60,7 @@ link: https://editor.p5js.org/LuisFernandoParra/sketches/YaBX2hQpt
 <img width="296" height="300" alt="image" src="https://github.com/user-attachments/assets/53bd48f5-4fd2-4f86-b3d7-a9bcd5a1a6fa" />
 
 #### CODIGO:
+
 ```JS
 let x1, x2, y1, y2;
 
@@ -109,4 +110,48 @@ lo que hice fue cambiar el color del stroke, aparte de eso cambie uno de los cir
 
 
 
+### TINKER:
+link: https://editor.p5js.org/LuisFernandoParra/sketches/qumFjkYrY
+
+``` JS
+let x1, x2, y1, y2;
+
+function setup() {
+  createCanvas(400, 400);
+  x1 = random(150,250)
+  y1 = random(150,250)
+  x2 = x1 - 80
+  y2 = y1 - 80
+
+
+  
+
+
+}
+
+function draw() {
+ 
+  background(220);
+  stroke(0,0,255);
+  strokeWeight(3)
+  line(x1, y1, x2, y2);
+  strokeWeight(0)
+  fill(0,0,0);
+  circle(x1,y1,25);
+  fill(0,0,0);
+  circle(x2,y2,25);
+  translate()
+  
+  if (mouseIsPressed){
+    x1 = mouseX
+    y1 = mouseY
+  }
+  
+  x2 += ((x1 - x2)-80) * 10;
+  y2 += ((y1 - y2)-80)* 10;
+  
+}
+
+
+```
 
