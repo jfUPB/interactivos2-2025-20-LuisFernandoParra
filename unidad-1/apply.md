@@ -10,3 +10,47 @@ El diseno es el de de dos bolas negras que estan unidas por un hilo azul, estas 
 ### ANALYZE:
 El programa debe tener unas variables tanto en x como en y para que lea la posicion del puntero en el lienzo, debe tambien de tener algun random en la posicion de las bolas al momento de iniciar el programa muy seguramente y debe tener algo que lea tambien cuando se esta presionando en el puntero en el lienzo.
 
+### CONVERT:
+https://editor.p5js.org/LuisFernandoParra/sketches/XZO7Wh71r
+#### CODIGO FUENTE:
+``` JS
+let x1, x2, y1, y2;
+
+function setup() {
+  createCanvas(400, 400);
+  x1 = random(150,250)
+  y1 = random(150,250)
+  x2 = x1 - 80
+  y2 = y1 - 80
+
+
+  
+
+
+}
+
+function draw() {
+ 
+  background(220);
+  stroke(0,0,255);
+  strokeWeight(3)
+  line(x1, y1, x2, y2);
+  strokeWeight(0)
+  fill(0,0,0);
+  circle(x1,y1,25);
+  fill(0,0,0);
+  circle(x2,y2,25);
+  translate()
+  
+  if (mouseIsPressed){
+    x1 = mouseX
+    y1 = mouseY
+  }
+  
+  x2 += ((x1 - x2)-80) * 0.1;
+  y2 += ((y1 - y2)-80)* 0.1;
+  
+}
+
+
+```
