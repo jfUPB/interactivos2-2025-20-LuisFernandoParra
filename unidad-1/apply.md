@@ -104,7 +104,7 @@ function draw() {
 ```
 
 #### EXPLICACION:
-lo que hice fue cambiar el color del stroke, aparte de eso cambie uno de los circles por square para volver  uno de lo
+lo que hice fue cambiar el color del stroke, aparte de eso cambie uno de los circles por square para volver  uno de los circulos en cuadrados, tambien quise cambiar el grosor de la linea asi que cambie el stroke weight de 3 a 8
 
 
 
