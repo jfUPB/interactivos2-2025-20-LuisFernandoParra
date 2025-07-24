@@ -160,5 +160,5 @@ function draw() {
 ```
 
 #### EXPLICACION:
-lo que hice fue simplemente alterar la velocidad en la que las bolas tardaban en reunirse la cambie de 0.1 a 10 y eso hizo que el programa al momento de darle click la linea impiece a moverse de forma erratica y que desaparezca la linea junto con una de las bolas y que nada mas quede como un programa de una bola que se mueve cuando presionas el curso y que te sigue o sea quedo como el programa de antes pero sin la bola y sin la linea"
+lo que hice fue simplemente alterar la velocidad en la que las bolas tardaban en reunirse la cambie de 0.1 a 10 y eso hizo que el programa al momento de darle click la linea empiece a moverse de forma erratica y que desaparezca la linea junto con una de las bolas y que nada mas quede como un programa de una bola que se mueve cuando presionas el curso y que te sigue o sea quedo como el programa de antes pero sin la bola y sin la linea"
 
