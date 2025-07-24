@@ -3,9 +3,8 @@
 ## 🛠 Fase: Apply
 
 ###  SELECT:
-http://www.generative-gestaltung.de/2/sketches/?01_P/P_3_1_1_01
-
+http://www.generative-gestaltung.de/2/sketches/?02_M/M_6_1_02
 ### DESCRIBE:
-El diseno en este caso apenas se ejecuta aparece un texto que dice "type slow and fast" y una barra de color rojo la cual va aumentandoo tanto de largo como de ancho, tambien la letra que aparece al inicio y la barra se van moviendo con el cursor de arriba hacia abajo, ahorwa la magia detras de este diseno es que entre mas se va agrandando la barra ( que recordemos que esta aumenta mientras mas pase el timepo) la letra se va haciendo mas grande entre mas se llene la barra y mas pequena entre mas chica sea la barra, la barra misma tiene tambien un limite de tiempo pues las letras no pueden crecer de forma ilimitada no sabria decir bien cual es el timpo limite pero yo le estimaria unos cinco segundos, la letra por lo que puedo observar es times new roman creo.
+El diseno es el de de dos bolas negras que estan unidas por un hilo azul, estas bolas aparecen en un lugar aleatorio del lienzo por defecto, cuando uno presiona cualquier parte del lienzo hace  que una de las bolas en este caso la que mas cerca este de donde el mouse presiono la pantalla se trasnporte a dicho punto lo que hace que el hilo azul que las une se alargue y que la bola que se habia quedado en el posicion anterior se deslice atraves del hilo y quede a la misma distancia de que tenian entre ellas apenas se inicio el diseno, a su vez si decides mantener el curso y irte moviendo alrededor del lienzo ahi si las bolas seguiran el movimiento que haga el cursor
 
 ### ANALYZE:
