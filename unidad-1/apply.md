@@ -55,8 +55,9 @@ function draw() {
 
 ```
 ### EXPLORE:
+link: https://editor.p5js.org/LuisFernandoParra/sketches/YaBX2hQpt
 
-<img width="302" height="297" alt="image" src="https://github.com/user-attachments/assets/f147b6d1-9e33-414a-8df3-00a1308d031f" />
+<img width="296" height="300" alt="image" src="https://github.com/user-attachments/assets/53bd48f5-4fd2-4f86-b3d7-a9bcd5a1a6fa" />
 
 #### CODIGO:
 ```JS
@@ -66,8 +67,8 @@ function setup() {
   createCanvas(400, 400);
   x1 = random(150,250)
   y1 = random(150,250)
-  x2 = x1 - 80
-  y2 = y1 - 80
+  x2 = x1 - 160
+  y2 = y1 - 160
 
 
   
@@ -93,16 +94,18 @@ function draw() {
     y1 = mouseX
   }
   
-  x2 += ((x1 - x2)-30) * 0.4;
-  y2 += ((y1 - y2)-30)* 0.4;
+  x2 += ((x1 - x2)-160) * 0.4;
+  y2 += ((y1 - y2)-160)* 0.4;
   
 }
+
+
 
 
 ```
 
 #### EXPLICACION:
-lo que hice fue cambiar el color del stroke, aparte de eso cambie uno de los circles por square para volver  uno de los circulos en cuadrados, tambien quise cambiar el grosor de la linea asi que cambie el stroke weight de 3 a 8, tambien aumente el tamano de del circulo, la distancia en la que se demoraban las bolas en pegarse y por ultimo
+lo que hice fue cambiar el color del stroke, aparte de eso cambie uno de los circles por square para volver  uno de los circulos en cuadrados, tambien quise cambiar el grosor de la linea asi que cambie el stroke weight de 3 a 8, tambien aumente el tamano de del circulo, tambien inverti los valores de x1 y y1 y ahora se movia de forma muy extrana y por ultimo alargue la linea que unia ambos alterando
 
 
 
