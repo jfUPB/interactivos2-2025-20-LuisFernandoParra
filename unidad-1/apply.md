@@ -87,7 +87,7 @@ function draw() {
   fill(0,0,0);
   square(x1,y1,25);
   fill(0,0,0);
-  circle(x2,y2,25);
+  circle(x2,y2,80);
   translate()
   
   if (mouseIsPressed){
