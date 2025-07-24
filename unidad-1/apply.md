@@ -95,15 +95,16 @@ function draw() {
     y1 = mouseX
   }
   
-  x2 += ((x1 - x2)-30) * 0.10;
-  y2 += ((y1 - y2)-30)* 0.10;
+  x2 += ((x1 - x2)-30) * 0.4;
+  y2 += ((y1 - y2)-30)* 0.4;
   
 }
 
 
 ```
 
-
+#### EXPLICACION:
+lo que hice fue cambiar el color del stroke, aparte de eso cambie uno de los circles por square para volver  uno de lo
 
 
 
