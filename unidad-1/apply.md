@@ -55,8 +55,6 @@ function draw() {
 
 ```
 ### EXPLORE:
-link: https://editor.p5js.org/LuisFernandoParra/sketches/XZO7Wh71r
-
 
 <img width="302" height="297" alt="image" src="https://github.com/user-attachments/assets/f147b6d1-9e33-414a-8df3-00a1308d031f" />
 
@@ -104,7 +102,7 @@ function draw() {
 ```
 
 #### EXPLICACION:
-lo que hice fue cambiar el color del stroke, aparte de eso cambie uno de los circles por square para volver  uno de los circulos en cuadrados, tambien quise cambiar el grosor de la linea asi que cambie el stroke weight de 3 a 8
+lo que hice fue cambiar el color del stroke, aparte de eso cambie uno de los circles por square para volver  uno de los circulos en cuadrados, tambien quise cambiar el grosor de la linea asi que cambie el stroke weight de 3 a 8, tambien aumente el tamano de del circulo, la distancia en la que se demoraban las bolas en pegarse y por ultimo
 
 
 
