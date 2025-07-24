@@ -113,6 +113,10 @@ lo que hice fue cambiar el color del stroke, aparte de eso cambie uno de los cir
 ### TINKER:
 link: https://editor.p5js.org/LuisFernandoParra/sketches/qumFjkYrY
 
+
+<img width="299" height="295" alt="image" src="https://github.com/user-attachments/assets/352d330d-83cc-437a-848b-de88637dc734" />
+
+#### CODIGO:
 ``` JS
 let x1, x2, y1, y2;
 
