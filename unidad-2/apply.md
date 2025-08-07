@@ -2,7 +2,7 @@
 
 
 ## 🛠 Fase: Apply
-
+### Titulo: Caer También Es Volar
 ### Exploracion
 Tema número 5, Icaro del álbum Ambrosía
 
@@ -135,4 +135,5 @@ En la canción, Nerón Arkano es ese Ícaro moderno. Cada verso es un aleteo en 
 
 “Ícaro” no es una advertencia: es una confesión. No habla de caer por imprudente, sino de caer por humano. La fragilidad no es una falla del personaje: es su esencia.
 Y es ahí donde se encuentra la belleza más cruda.
+
 
