@@ -128,4 +128,11 @@ La fragilidad aquí no es debilidad, es el eco más honesto de la humanidad.
 - *Los diseñadores* definen las reglas que permiten que el caos tenga sentido.
 
 
+### Neron Arkano y icaro dos caras de una misma moneda
+En la mitología griega, Ícaro es el joven que voló demasiado cerca del sol con alas hechas de plumas y cera, desobedeciendo a su padre Dédalo. Su caída no fue simplemente un castigo, sino el resultado inevitable de la osadía de desear algo más alto que lo permitido.
+
+En la canción, Nerón Arkano es ese Ícaro moderno. Cada verso es un aleteo en medio del dolor, la desesperanza y el autoengaño. Su voz no vuela por arrogancia, sino por una necesidad profunda de escapar, de encontrar sentido, de ser libre aunque duela. Como Ícaro, sabe que su vuelo lo puede destruir, pero elige intentarlo porque vivir sin ese impulso sería aún más devastador.
+
+“Ícaro” no es una advertencia: es una confesión. No habla de caer por imprudente, sino de caer por humano. La fragilidad no es una falla del personaje: es su esencia.
+Y es ahí donde se encuentra la belleza más cruda.
 
