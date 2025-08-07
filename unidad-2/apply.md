@@ -83,10 +83,6 @@ y ya vivo en la alcantarilla
 las sirenas me acribillan y me llevan a morir sobre la orilla  
 chillan a sonrisas que me humillan que me clavas sus cuchillas  
 
-pero llevo ya agonizando 8 millas  
-mi llanto me tumba de rodillas  
-deja en coma mis comillas  
-la sombras del recuerdo no se rastrillan
 ---
 
 ###  Concepto Raíz:
@@ -130,4 +126,6 @@ La fragilidad aquí no es debilidad, es el eco más honesto de la humanidad.
 - *El público* participa como testigo y cómplice del derrumbe, enviando palabras que alimentan el sistema.  
 - *El sistema generativo* crea los paisajes visuales del colapso.  
 - *Los diseñadores* definen las reglas que permiten que el caos tenga sentido.
+
+
 
