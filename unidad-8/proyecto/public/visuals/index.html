@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visualizador DTMF</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/addons/p5.sound.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+    <style>
+        body { margin: 0; overflow: hidden; background: #05050a; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script>
+        const socket = io();
+
+        let estadoActual = 0; // 0 intro, 1 reunir, 2 foto, 3 final, 4 fuegos
+        let fotoMostrada = null;
+        let stickers = [];
+        let shakeMagnitude = 0;
+        let fireworks = [];
+        let collageEntries = [];
+        let introPulses = [];
+        let musicaFondo;
+        const stickerImages = {};
+        let toneColors = {};
+        let smileTimer = 0;
+        const STICKER_SIZE = 160;
+
+        // --- Escena 1: Sunset controller ---
+        let introStartTime = null;
+        let sunsetInteractionTriggered = false;
+        let sunsetBlendTarget = 0.65; // 0: noche (luna), 1: atardecer cálido (sol)
+        let sunsetBlend = 0.65;
+        let palmSilhouettes = [];
+        let palmImage;
+
+        function preload() {
+            palmImage = loadImage('../assets/palmera.png');
+            stickerImages['base'] = palmImage;
+            ConchoImage = loadImage('../assets/conchofoto.png');
+            stickerImages['concho'] = ConchoImage;
+            SillasImage = loadImage('../assets/sillas.png');
+            stickerImages['sillas'] = SillasImage;
+            ticketImage = loadImage('../assets/ticket.png');
+            stickerImages['ticket'] = ticketImage;
+
+            musicaFondo = loadSound('../assets/sonido/cancion.mp3');
+        }
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            imageMode(CENTER);
+            textAlign(CENTER, CENTER);
+            textFont('Poppins');
+            toneColors = {
+                'D': color(241, 91, 181),
+                'T': color(0, 187, 249),
+                'M': color(0, 245, 212),
+                'F': color(254, 228, 64)
+            };
+        }
+
+        function draw() {
+            background(5, 5, 15);
+
+            switch (estadoActual) {
+                case 0:
+                    drawIntroScene();
+                    break;
+                case 1:
+                    drawGatherScene();
+                    break;
+                case 2:
+                    drawPhotoScene(false);
+                    break;
+                case 3:
+                    drawPhotoScene(true);
+                    break;
+                case 4:
+                    drawFireworksScene();
+                    break;
+                case 5:
+                    drawCollageScene();
+                    break;
+            }
+
+            if (smileTimer > 0) {
+                drawSmileOverlay();
+                smileTimer--;
+            }
+        }
+
+        function drawIntroScene() {
+            if (introStartTime === null) {
+                introStartTime = millis();
+                palmSilhouettes = createPalmSilhouettes();
+            }
+
+            const elapsed = (millis() - introStartTime) / 1000;
+            sunsetBlend += (sunsetBlendTarget - sunsetBlend) * 0.025;
+            sunsetBlend = constrain(sunsetBlend, 0, 1);
+
+            if (elapsed < 10) {
+                drawPalmPhase(elapsed);
+            } else {
+                drawSunsetPhase(elapsed);
+                if (!sunsetInteractionTriggered) {
+                    sunsetInteractionTriggered = true;
+                    socket.emit('activar_interaccion_sunset');
+                }
+            }
+
+            for (let i = introPulses.length - 1; i >= 0; i--) {
+                introPulses[i].update();
+                introPulses[i].show();
+                if (introPulses[i].isFinished()) {
+                    introPulses.splice(i, 1);
+                }
+            }
+        }
+
+        function createPalmSilhouettes() {
+            const silhouettes = [];
+            const total = Math.max(6, Math.floor(width / 180));
+            for (let i = 0; i < total; i++) {
+                silhouettes.push({
+                    x: map(i, 0, total - 1, width * 0.05, width * 0.95) + random(-20, 20),
+                    baseScale: random(0.32, 0.58),
+                    swaySpeed: random(0.6, 1.4),
+                    swayOffset: random(TWO_PI),
+                    pulseOffset: random(TWO_PI)
+                });
+            }
+            return silhouettes;
+        }
+
+        function drawPalmPhase(elapsed) {
+            background(0, 0, 0);
+            const pulse = (sin(elapsed * PI * 3) + 1) / 2;
+
+            noStroke();
+            fill(10, 10, 18, 160 + pulse * 60);
+            rect(0, 0, width, height);
+
+            palmSilhouettes.forEach((palm) => {
+                const localPulse = (sin(elapsed * palm.swaySpeed * 2 + palm.pulseOffset) + 1) / 2;
+                const scaleFactor = palm.baseScale * lerp(0.92, 1.05, localPulse);
+                const sway = sin(elapsed * palm.swaySpeed + palm.swayOffset) * 12;
+                const palmHeight = palmImage.height * scaleFactor;
+                const y = height - palmHeight / 2 - localPulse * 18;
+
+                push();
+                translate(palm.x + sway, y);
+                scale(scaleFactor);
+                tint(0, 210);
+                image(palmImage, 0, 0);
+                pop();
+            });
+
+            const titleAlpha = lerp(0, 255, constrain(elapsed / 4, 0, 1));
+            fill(255, titleAlpha);
+            textSize(width < 900 ? 54 : 78);
+            text('BAD BUNNY · DTMF', width / 2, height * 0.26);
+            textSize(width < 900 ? 28 : 42);
+            text('AMANECER CONTROLADO', width / 2, height * 0.38);
+
+            fill(180, 190, 255, titleAlpha * 0.8);
+            textSize(width < 900 ? 20 : 26);
+            text('Escucha el intro. Sol y luna despiertan en los móviles.', width / 2, height * 0.75);
+        }
+
+        function drawSunsetPhase(elapsed) {
+            const progress = constrain((elapsed - 10) / 4, 0, 1);
+            const topNight = color(14, 14, 34);
+            const bottomNight = color(4, 4, 12);
+            const topWarm = color(255, 180, 94);
+            const bottomWarm = color(210, 62, 86);
+            const topCool = color(110, 120, 210);
+            const bottomCool = color(40, 36, 90);
+
+            const topTarget = lerpColor(topCool, topWarm, sunsetBlend);
+            const bottomTarget = lerpColor(bottomCool, bottomWarm, sunsetBlend);
+            const topColor = lerpColor(topNight, topTarget, progress);
+            const bottomColor = lerpColor(bottomNight, bottomTarget, progress);
+
+            for (let y = 0; y <= height; y += 3) {
+                const lerpVal = map(y, 0, height, 0, 1);
+                const c = lerpColor(topColor, bottomColor, lerpVal);
+                stroke(c);
+                line(0, y, width, y);
+            }
+
+            const sunReveal = constrain((elapsed - 10) / 6, 0, 1);
+            const sunRadius = lerp(width * 0.12, width * 0.32, sunReveal);
+            const sunY = lerp(height * 0.7, height * 0.45, sunReveal);
+            const sunCoreWarm = color(255, 229, 168);
+            const sunCoreCool = color(210, 208, 255);
+            const sunColor = lerpColor(sunCoreCool, sunCoreWarm, sunsetBlend);
+
+            noStroke();
+            for (let r = sunRadius * 1.4; r > sunRadius * 0.4; r -= sunRadius * 0.12) {
+                const alpha = map(r, sunRadius * 1.4, sunRadius * 0.4, 0, 180);
+                fill(red(sunColor), green(sunColor), blue(sunColor), alpha);
+                ellipse(width / 2, sunY, r * 2);
+            }
+
+            fill(red(sunColor), green(sunColor), blue(sunColor), 240);
+            ellipse(width / 2, sunY, sunRadius * 1.4);
+
+            palmSilhouettes.forEach((palm) => {
+                const scaleFactor = palm.baseScale * lerp(0.9, 1.08, 0.4 + 0.6 * noise(frameCount * 0.01 + palm.swayOffset));
+                const sway = sin((elapsed - 10) * palm.swaySpeed * 0.6 + palm.swayOffset) * 8;
+                const palmHeight = palmImage.height * scaleFactor;
+                const y = height - palmHeight / 2 + 6;
+
+                push();
+                translate(palm.x + sway, y);
+                scale(scaleFactor);
+                const tintColor = lerpColor(color(0, 0, 0, 220), color(255, 140, 60, 240), sunsetBlend);
+                tint(tintColor);
+                image(palmImage, 0, 0);
+                pop();
+            });
+
+            fill(255, 240);
+            textSize(width < 900 ? 40 : 58);
+            text('SUNSET CONTROL · SOL VS LUNA', width / 2, height * 0.16);
+
+            fill(240, 240, 255, 190);
+            textSize(width < 900 ? 20 : 26);
+            text('Botones activados en móviles. Mantengan el color en equilibrio.', width / 2, height * 0.82);
+        }
+
+        function drawGatherScene() {
+            drawGradientBackground();
+            fill(255);
+            textSize(width < 900 ? 52 : 68);
+            text('Junten todos para la foto', width / 2, height * 0.38);
+            fill(180, 180, 255, 180);
+            textSize(width < 900 ? 24 : 30);
+            text('El staff está alineando la toma. Móviles listos.', width / 2, height * 0.52);
+        }
+
+        function drawPhotoScene(isFinal) {
+            drawGradientBackground();
+            if (fotoMostrada) {
+                push();
+                const ratio = fotoMostrada.width / fotoMostrada.height;
+                const canvasRatio = width / height;
+                let drawWidth, drawHeight;
+                if (ratio > canvasRatio) {
+                    drawWidth = width;
+                    drawHeight = width / ratio;
+                } else {
+                    drawHeight = height;
+                    drawWidth = height * ratio;
+                }
+                image(fotoMostrada, width / 2, height / 2, drawWidth, drawHeight);
+                pop();
+            }
+
+            stickers.forEach(sticker => {
+                const stickerImg = stickerImages[sticker.stickerId] || stickerImages['base'];
+                if (!stickerImg) return;
+                const sx = sticker.x * width;
+                const sy = sticker.y * height;
+                const toneColor = toneColors[sticker.tone] || color(255);
+                push();
+                imageMode(CENTER);
+                tint(red(toneColor), green(toneColor), blue(toneColor), 240);
+                // ajustar tamaño según constante
+                image(stickerImg, sx, sy, STICKER_SIZE, STICKER_SIZE);
+                noTint();
+                pop();
+            });
+
+            if (!isFinal && shakeMagnitude > 0) {
+                push();
+                noStroke();
+                fill(255, 255, 255, 90);
+                ellipse(width / 2, height / 2, shakeMagnitude * 18);
+                shakeMagnitude *= 0.9;
+                pop();
+            }
+
+            if (isFinal) {
+                fill(10, 10, 15, 180);
+                rect(0, height * 0.82, width, height * 0.18);
+                fill(255);
+                textSize(width < 900 ? 30 : 40);
+                text('Memoria DTMF lista para descargar', width / 2, height * 0.9);
+            }
+        }
+
+        function drawFireworksScene() {
+            drawGradientBackground();
+            fill(255);
+            textSize(width < 900 ? 56 : 74);
+            text('¡LANZA LOS PETARDOS!', width / 2, height * 0.24);
+            textSize(width < 900 ? 26 : 34);
+            fill(200, 200, 255, 190);
+            text('Levanta los móviles cuando el beat caiga', width / 2, height * 0.32);
+
+            const gravity = createVector(0, 0.22);
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                if (!fireworks[i].exploded) {
+                    fireworks[i].applyForce(gravity);
+                }
+                fireworks[i].update();
+                fireworks[i].show();
+                if (fireworks[i].isFinished()) {
+                    fireworks.splice(i, 1);
+                }
+            }
+        }
+
+        function drawCollageScene() {
+            drawGradientBackground();
+
+            fill(255);
+            textSize(width < 900 ? 54 : 72);
+            text('Selfie Collage en vivo', width / 2, height * 0.14);
+            textSize(width < 900 ? 22 : 28);
+            fill(220);
+            text('Las selfies llegan en tiempo real desde los móviles', width / 2, height * 0.2);
+
+            const loadedEntries = collageEntries.filter(entry => entry.img);
+
+            if (loadedEntries.length === 0) {
+                fill(200, 200, 255, 200);
+                textSize(width < 900 ? 28 : 36);
+                text('Esperando las primeras selfies…', width / 2, height * 0.55);
+                return;
+            }
+
+            const columns = loadedEntries.length >= 5 ? 3 : 2;
+            const rows = Math.ceil(loadedEntries.length / columns);
+            const collageTop = height * 0.25;
+            const availableHeight = height * 0.65;
+            const cellHeight = availableHeight / rows;
+            const cellWidth = width / columns;
+
+            for (let i = 0; i < loadedEntries.length; i++) {
+                const entry = loadedEntries[i];
+                const col = i % columns;
+                const row = Math.floor(i / columns);
+                const centerX = col * cellWidth + cellWidth / 2;
+                const centerY = collageTop + row * cellHeight + cellHeight / 2;
+                const drawWidth = cellWidth * 0.64;
+                const drawHeight = cellHeight * 0.62;
+
+                push();
+                noStroke();
+                fill(15, 18, 42, 210);
+                rectMode(CENTER);
+                rect(centerX, centerY, drawWidth * 1.08, drawHeight * 1.1, 26);
+
+                if (entry.img) {
+                    image(entry.img, centerX, centerY, drawWidth, drawHeight);
+                }
+
+                const label = mapMobileIdToLabel(entry.mobileId);
+                textSize(width < 900 ? 16 : 20);
+                fill(255, 245, 255, 220);
+                text(label, centerX, centerY + drawHeight * 0.58);
+
+                if (entry.pulse > 0) {
+                    const alpha = entry.pulse;
+                    stroke(255, 255, 255, alpha);
+                    strokeWeight(4);
+                    noFill();
+                    rect(centerX, centerY, drawWidth * 1.16, drawHeight * 1.18, 28);
+                    entry.pulse = max(0, entry.pulse - 6);
+                }
+
+                pop();
+            }
+        }
+
+        function drawGradientBackground() {
+            noFill();
+            for (let y = 0; y <= height; y += 4) {
+                const lerpVal = map(y, 0, height, 0, 1);
+                const c1 = color(15, 10, 40);
+                const c2 = color(5, 5, 15);
+                const c = lerpColor(c1, c2, lerpVal);
+                stroke(c);
+                line(0, y, width, y);
+            }
+        }
+
+        function drawSmileOverlay() {
+            push();
+            fill(0, 0, 0, 140);
+            rect(0, 0, width, height);
+            fill(255);
+            textSize(width < 900 ? 46 : 62);
+            text('¡SONRÍE! LA FOTO VA AHORA', width / 2, height / 2);
+            pop();
+        }
+
+        function addSelfieToCollage(payload) {
+            if (!payload || !payload.imageData) {
+                return;
+            }
+
+            const entry = {
+                id: payload.timestamp || Date.now(),
+                mobileId: payload.mobileId || 'mobile',
+                img: null,
+                pulse: 255
+            };
+
+            collageEntries.push(entry);
+
+            if (collageEntries.length > 12) {
+                collageEntries = collageEntries.slice(collageEntries.length - 12);
+            }
+
+            loadImage(payload.imageData, (img) => {
+                entry.img = img;
+            });
+        }
+
+        function mapMobileIdToLabel(mobileId) {
+            if (mobileId === 'mobile_a') {
+                return 'Mobile A · Vibras';
+            }
+            if (mobileId === 'mobile_b') {
+                return 'Mobile B · Luz';
+            }
+            return 'Tribu DTMF';
+        }
+
+        class IntroPulse {
+            constructor({ tone, intensity, mobileId }) {
+                this.x = random(width * 0.2, width * 0.8);
+                this.y = random(height * 0.25, height * 0.8);
+                this.radius = 40;
+                this.growth = map(intensity || 1, 0.4, 1.6, 10, 26);
+                this.alpha = 255;
+                this.tone = tone || 'D';
+                this.mobileId = mobileId;
+                this.color = toneColors[this.tone] || color(255);
+            }
+
+            update() {
+                this.radius += this.growth;
+                this.alpha -= 4;
+            }
+
+            show() {
+                push();
+                stroke(red(this.color), green(this.color), blue(this.color), this.alpha);
+                strokeWeight(4);
+                noFill();
+                ellipse(this.x, this.y, this.radius * 2);
+                fill(red(this.color), green(this.color), blue(this.color), this.alpha);
+                noStroke();
+                textSize(map(this.radius, 40, 420, 28, 96));
+                text(this.tone, this.x, this.y);
+                pop();
+            }
+
+            isFinished() {
+                return this.alpha <= 0;
+            }
+        }
+
+        class Firework {
+            constructor(mobileId, intensity) {
+                this.pos = createVector(random(width * 0.2, width * 0.8), height * 0.95);
+                this.vel = createVector(random(-1.5, 1.5), random(-16, -22));
+                this.acc = createVector(0, 0);
+                if (mobileId === 'mobile_a') {
+                    this.color = color(241, 91, 181);
+                } else {
+                    this.color = color(0, 187, 249);
+                }
+                this.lifespan = 255;
+                this.exploded = false;
+                this.explosionParticles = [];
+                this.intensity = map(intensity, 30, 90, 0.6, 1.5);
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.vel.add(this.acc);
+                    this.pos.add(this.vel);
+                    this.acc.mult(0);
+                    this.lifespan -= 4;
+                    if (this.vel.y > -2 || this.lifespan < 80) {
+                        this.explode();
+                    }
+                } else {
+                    for (let i = this.explosionParticles.length - 1; i >= 0; i--) {
+                        this.explosionParticles[i].update();
+                        if (this.explosionParticles[i].isFinished()) {
+                            this.explosionParticles.splice(i, 1);
+                        }
+                    }
+                }
+            }
+
+            applyForce(force) {
+                this.acc.add(force);
+            }
+
+            explode() {
+                this.exploded = true;
+                const numParticles = Math.floor(random(60, 110) * this.intensity);
+                for (let i = 0; i < numParticles; i++) {
+                    this.explosionParticles.push(new Particle(this.pos.x, this.pos.y, this.color));
+                }
+            }
+
+            show() {
+                if (!this.exploded) {
+                    stroke(this.color);
+                    strokeWeight(4);
+                    point(this.pos.x, this.pos.y);
+                } else {
+                    for (const particle of this.explosionParticles) {
+                        particle.show();
+                    }
+                }
+            }
+
+            isFinished() {
+                return this.exploded && this.explosionParticles.length === 0;
+            }
+        }
+
+        class Particle {
+            constructor(x, y, colorIn) {
+                this.pos = createVector(x, y);
+                this.vel = p5.Vector.random2D();
+                this.vel.mult(random(2, 9));
+                this.lifespan = 255;
+                this.color = colorIn;
+            }
+
+            update() {
+                this.vel.mult(0.94);
+                this.pos.add(this.vel);
+                this.lifespan -= 5;
+            }
+
+            show() {
+                noStroke();
+                fill(red(this.color), green(this.color), blue(this.color), this.lifespan);
+                ellipse(this.pos.x, this.pos.y, 4, 4);
+            }
+
+            isFinished() {
+                return this.lifespan <= 0;
+            }
+        }
+
+        socket.on('escena_1_intro', () => {
+            console.log('Visual: escena 1 (intro) activada.');
+            estadoActual = 0;
+            introPulses = [];
+            fireworks = [];
+            stickers = [];
+            fotoMostrada = null;
+            introStartTime = null;
+            sunsetInteractionTriggered = false;
+            sunsetBlendTarget = 0.65;
+            sunsetBlend = 0.65;
+            palmSilhouettes = [];
+            collageEntries = [];
+        });
+
+        socket.on('pulso_dtmf_visual', (data) => {
+            if (estadoActual === 0) {
+                introPulses.push(new IntroPulse(data));
+            }
+        });
+
+        socket.on('actualizar_sunset_color', (momento) => {
+            if (momento === 'sol') {
+                sunsetBlendTarget = 1;
+            } else if (momento === 'luna') {
+                sunsetBlendTarget = 0;
+            }
+        });
+
+        socket.on('cambiar_a_escena_3', () => {
+            console.log('Visual: escena 3 (pre foto) activada.');
+            estadoActual = 1;
+            introPulses = [];
+        });
+
+        socket.on('mostrar_foto', (imageData) => {
+            console.log('Visual: foto recibida. Escena 2.');
+            estadoActual = 2;
+            stickers = [];
+            loadImage(imageData, (img) => {
+                fotoMostrada = img;
+            });
+        });
+
+        socket.on('agregar_sticker_visualizador', (stickerData) => {
+            stickers.push(stickerData);
+        });
+
+        socket.on('efecto_maraca', (data) => {
+            const magnitude = Math.sqrt(data.x * data.x + data.y * data.y + data.z * data.z);
+            shakeMagnitude = magnitude;
+        });
+
+        socket.on('mostrar_foto_final', (data) => {
+            console.log('Visual: foto final lista.');
+            estadoActual = 3;
+            if (data) {
+                loadImage(data.foto, (img) => {
+                    fotoMostrada = img;
+                });
+                stickers = data.stickers || stickers;
+            }
+        });
+
+        socket.on('cambiar_a_escena_4', () => {
+            console.log('Visual: escena 2 (fuegos) activada.');
+            estadoActual = 4;
+            fireworks = [];
+            collageEntries = [];
+        });
+
+        socket.on('mostrar_fuego_artificial', (data) => {
+            if (estadoActual === 4) {
+                fireworks.push(new Firework(data.mobileId, data.intensity));
+            }
+        });
+
+        socket.on('mostrar_collage_estado_2', (selfies) => {
+            console.log('Visual: cambiando a collage de selfies.');
+            estadoActual = 5;
+            fireworks = [];
+            if (Array.isArray(selfies)) {
+                collageEntries = [];
+                selfies.forEach(addSelfieToCollage);
+            }
+        });
+
+        socket.on('agregar_selfie_estado_2', (payload) => {
+            if (estadoActual === 4) {
+                estadoActual = 5;
+                fireworks = [];
+            }
+            addSelfieToCollage(payload);
+        });
+
+        socket.on('resetear_collage_estado_2', () => {
+            if (estadoActual === 5) {
+                estadoActual = 4;
+            }
+            collageEntries = [];
+        });
+
+        socket.on('control_musica_visualizador', (action) => {
+            if (musicaFondo.isLoaded()) {
+                if (action === 'play' && !musicaFondo.isPlaying()) {
+                    musicaFondo.loop();
+                } else if (action === 'pause' && musicaFondo.isPlaying()) {
+                    musicaFondo.pause();
+                } else if (action === 'forward') {
+                    const newTime = musicaFondo.currentTime() + 10;
+                    if (newTime < musicaFondo.duration()) {
+                        musicaFondo.jump(newTime);
+                    }
+                }
+            }
+        });
+
+        socket.on('mostrar_gif_sonrie', () => {
+            smileTimer = 240;
+        });
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+    </script>
+</body>
+</html>
