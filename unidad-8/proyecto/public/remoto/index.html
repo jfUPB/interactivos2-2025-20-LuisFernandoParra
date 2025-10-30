@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Control Remoto · DTMF</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="panel">
+        <header>
+            <h1>Control DTMF</h1>
+            <p>Secuencia recomendada: Intro → Fuegos → Foto → Final.</p>
+        </header>
+
+        <section class="grid">
+            <button id="btn-escena1" class="btn-control primary">Escena 1 · Pulso</button>
+            <button id="btn-estado2" class="btn-control warning">Escena 2 · Fuegos</button>
+            <button id="btn-estado3" class="btn-control accent">Escena 3 · Foto</button>
+            <button id="btn-foto" class="btn-control info">Habilitar Foto</button>
+            <button id="btn-finalizar" class="btn-control success">Finalizar Show</button>
+        </section>
+
+        <section class="music">
+            <h3>Música de escenario</h3>
+            <div class="music-buttons">
+                <button id="play-btn">Play</button>
+                <button id="pause-btn">Pause</button>
+                <button id="forward-btn">+10s</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="sketch.js"></script>
+</body>
+</html>
